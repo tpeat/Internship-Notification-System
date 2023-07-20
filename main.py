@@ -62,35 +62,35 @@ def extract_company_names_from_readme(readme_content):
         return None
 
 # Check for updates
-# while True:
-try:
-    response = requests.get(github_readme_url, headers=headers)
-    if response.status_code == 200:
-        readme_data = response.json()
-        readme_content = decode_readme(readme_data)
-        current_hash = calculate_hash(readme_content)
-        last_hash = read_last_hash()
+while True:
+    try:
+        response = requests.get(github_readme_url, headers=headers)
+        if response.status_code == 200:
+            readme_data = response.json()
+            readme_content = decode_readme(readme_data)
+            current_hash = calculate_hash(readme_content)
+            last_hash = read_last_hash()
 
-        if last_hash is None:
-            # First run, save the hash and skip notification
-            write_new_hash(current_hash)
-        elif last_hash != current_hash:
-            # Content has changed, send notification and update hash
-            print("README content has changed. Sending notification...")
-            last_company_name = extract_company_names_from_readme(readme_content)
-            print("Last comapny name", last_company_name)
-            # New update, send a text notification with last company posted
-            msg = "New internship has been posted!\nMost recent: " + last_company_name
-            # send_text_notification(msg)
-            # Add your notification code here (e.g., send an email or text)
-            write_new_hash(current_hash)
+            if last_hash is None:
+                # First run, save the hash and skip notification
+                write_new_hash(current_hash)
+            elif last_hash != current_hash:
+                # Content has changed, send notification and update hash
+                print("README content has changed. Sending notification...")
+                last_company_name = extract_company_names_from_readme(readme_content)
+                print("Last comapny name", last_company_name)
+                # New update, send a text notification with last company posted
+                msg = "New internship has been posted!\nMost recent: " + last_company_name
+                # send_text_notification(msg)
+                # Add your notification code here (e.g., send an email or text)
+                write_new_hash(current_hash)
+            else:
+                print("README content is the same. No notification needed.")
         else:
-            print("README content is the same. No notification needed.")
-    else:
-        print(f"Unexpected response code: {response.status_code}")
+            print(f"Unexpected response code: {response.status_code}")
 
-except Exception as e:
-    print(f"An error occurred: {e}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
     # Check for updates every hour
-    # time.sleep(3600)
+    time.sleep(3600)
